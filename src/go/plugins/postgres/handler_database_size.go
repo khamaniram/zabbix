@@ -1,6 +1,6 @@
 /* /*
 ** Zabbix
-** Copyright (C) 2001-2019 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -21,39 +21,35 @@ package postgres
 
 import (
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v4"
+	"zabbix.com/pkg/zbxerr"
 )
 
-const (
-	keyPostgresDatabasesSize = "pgsql.db.size"
-)
-
-// databasesSizeHandler gets info about count and size of archive files and returns JSON if all is OK or nil otherwise.
-func (p *Plugin) databasesSizeHandler(conn *postgresConn, key string, params []string) (interface{}, error) {
+// databaseSizeHandler gets info about count and size of archive files and returns JSON if all is OK or nil otherwise.
+func databaseSizeHandler(ctx context.Context, conn PostgresClient,
+	_ string, params map[string]string, _ ...string) (interface{}, error) {
 	var countSize int64
-	// for now we are expecting only database name as a param
-	if len(params) == 0 {
-		return nil, errorFourthParamEmpty
-	}
-	if len(params[0]) == 0 {
-		return nil, errorFourthParamLen
-	}
 
-	err := conn.postgresPool.QueryRow(context.Background(),
-		`SELECT pg_database_size(datname::text)
+	query := `SELECT pg_database_size(datname::text)
 		FROM pg_catalog.pg_database
    		WHERE datistemplate = false
-			 AND datname = $1;`,
-		params[0]).Scan(&countSize)
+			 AND datname = $1;`
 
+	row, err := conn.QueryRow(ctx, query, params["Database"])
 	if err != nil {
-		if err == pgx.ErrNoRows {
-			p.Errf(err.Error())
-			return nil, errorEmptyResult
-		}
-		p.Errf(err.Error())
-		return nil, errorCannotFetchData
+		return nil, zbxerr.ErrorCannotFetchData.Wrap(err)
 	}
+
+	err = row.Scan(&countSize)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, zbxerr.ErrorEmptyResult.Wrap(err)
+		}
+
+		return nil, zbxerr.ErrorCannotFetchData.Wrap(err)
+	}
+
 	return countSize, nil
 }

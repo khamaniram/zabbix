@@ -1,6 +1,6 @@
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -17,29 +17,37 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
-package memcached
+package mysql
 
 import (
-	"testing"
+	"context"
+	"encoding/json"
+
+	"zabbix.com/pkg/zbxerr"
 )
 
-func Test_zabbixError_Error(t *testing.T) {
-	tests := []struct {
-		name string
-		e    zabbixError
-		want string
-	}{
-		{
-			"ZabbixError stringify",
-			zabbixError{"foobar"},
-			"Foobar.",
-		},
+func replicationDiscoveryHandler(ctx context.Context, conn MyClient, _ map[string]string,
+	_ ...string) (interface{}, error) {
+	res := make([]map[string]string, 0)
+
+	rows, err := conn.Query(ctx, `SHOW SLAVE STATUS`)
+	if err != nil {
+		return nil, zbxerr.ErrorCannotFetchData.Wrap(err)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.Error(); got != tt.want {
-				t.Errorf("zabbixError.Error() = %v, want %v", got, tt.want)
-			}
-		})
+
+	data, err := rows2data(rows)
+	if err != nil {
+		return nil, zbxerr.ErrorCannotFetchData.Wrap(err)
 	}
+
+	for _, row := range data {
+		res = append(res, map[string]string{"Master_Host": row["Master_Host"]})
+	}
+
+	jsonRes, err := json.Marshal(res)
+	if err != nil {
+		return nil, zbxerr.ErrorCannotMarshalJSON.Wrap(err)
+	}
+
+	return string(jsonRes), nil
 }

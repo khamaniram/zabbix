@@ -1,6 +1,8 @@
+// +build postgres_tests
+
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -17,53 +19,52 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
-package redis
+package postgres
 
 import (
+	"context"
+	"fmt"
 	"testing"
 )
 
-func Test_zabbixError_Error(t *testing.T) {
-	tests := []struct {
-		name string
-		e    zabbixError
-		want string
-	}{
-		{
-			"ZabbixError stringify",
-			zabbixError{"foobar"},
-			"foobar",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.Error(); got != tt.want {
-				t.Errorf("zabbixError.Error() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+func TestPlugin_oldestHandler(t *testing.T) {
 
-func Test_formatZabbixError(t *testing.T) {
+	// create pool or acquire conn from old pool for test
+	sharedPool, err := getConnPool()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	type args struct {
-		errText string
+		ctx         context.Context
+		conn        *PGConn
+		key         string
+		params      map[string]string
+		extraParams []string
 	}
 	tests := []struct {
-		name string
-		args args
-		want string
+		name    string
+		p       *Plugin
+		args    args
+		wantErr bool
 	}{
 		{
-			"Should fix if wrong formatted error text is passed",
-			args{"foobar"},
-			"Foobar.",
+			fmt.Sprintf("oldestXIDHandler() should return ptr to Pool for oldestXIDHandler()"),
+			&impl,
+			args{context.Background(), sharedPool, keyOldestXid, nil, []string{}},
+
+			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := formatZabbixError(tt.args.errText); got != tt.want {
-				t.Errorf("formatZabbixError() = %v, want %v", got, tt.want)
+			_, err := oldestXIDHandler(tt.args.ctx, tt.args.conn, tt.args.key, tt.args.params, tt.args.extraParams...)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Plugin.oldestXIDHandler() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
+
 		})
 	}
+
 }

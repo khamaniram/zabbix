@@ -1715,6 +1715,10 @@ form.is-loading {
 .wordwrap {
   word-break: break-all; }
 
+.wordbreak {
+  white-space: pre-wrap;
+  word-break: break-word; }
+
 .overflow-table {
   overflow-x: auto;
   position: relative; }
@@ -5608,9 +5612,9 @@ svg {
 .inline-sr-only {
   font-size: 0; }
 
-table.preprocessing-test-results td {
+.preprocessing-test-results td {
   vertical-align: top !important; }
-table.preprocessing-test-results .rel-container {
+.preprocessing-test-results .rel-container {
   top: 4px;
   margin-left: 3px; }
 
