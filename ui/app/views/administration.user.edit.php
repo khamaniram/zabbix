@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ $this->includeJsFile(($data['action'] === 'user.edit')
 $this->addJsFile('multiselect.js');
 $this->addJsFile('class.tab-indicators.js');
 
+$widget = new CWidget();
+
 if ($data['action'] === 'user.edit') {
 	$widget_name = _('Users');
 }
@@ -39,8 +41,10 @@ else {
 	$widget_name .= ($data['name'] !== '' || $data['surname'] !== '')
 		? $data['name'].' '.$data['surname']
 		: $data['alias'];
+	$widget->setTitleSubmenu(getUserSettingsSubmenu());
 }
-$widget = (new CWidget())->setTitle($widget_name);
+
+$widget->setTitle($widget_name);
 $tabs = new CTabView();
 
 if ($data['form_refresh'] == 0) {
