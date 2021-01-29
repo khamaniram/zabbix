@@ -345,6 +345,10 @@ footer {
     padding: 2px;
     overflow: hidden;
     justify-content: space-between; }
+    .sidebar .sidebar-header>.logo >img{
+      height:94px;
+      background:white;
+    }
 
   .sidebar .sidebar-header-buttons {
     display: flex;
