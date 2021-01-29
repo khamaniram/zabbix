@@ -367,7 +367,9 @@ footer {
       position: absolute;
       top: 0;
       left: 0;
-      opacity: 0; }
+      opacity: 0; 
+      height: 30px !important;
+      width: 30px;}
   .sidebar .button-hide,
   .sidebar .button-show,
   .sidebar .button-compact,
@@ -420,10 +422,12 @@ footer {
       display: none; }
     .sidebar.is-compact:not(.is-opened) .logo .sidebar-logo {
       opacity: 0;
-      transition: opacity 0s 0.3s; }
+      transition: opacity 0s 0.3s; height:30px;
+      width:30px;}
     .sidebar.is-compact:not(.is-opened) .logo .sidebar-logo-compact {
       opacity: 1;
-      transition: opacity 0s 0.3s; }
+      transition: opacity 0s 0.3s; height:30px;
+      width:30px;}
     .sidebar.is-compact:not(.is-opened) .server-name {
       opacity: 0; }
     .sidebar.is-compact:not(.is-opened) .form-search {

@@ -345,6 +345,7 @@ footer {
     padding: 2px;
     overflow: hidden;
     justify-content: space-between; }
+
   .sidebar .sidebar-header-buttons {
     display: flex;
     width: 48px;
@@ -375,12 +376,14 @@ footer {
     .sidebar .logo:active, .sidebar .logo:hover, .sidebar .logo:link, .sidebar .logo:visited {
       border: 0; }
     .sidebar .logo:focus .sidebar-logo {
-      box-shadow: 0 0 0 2px rgba(66, 154, 227, 0.35); }
+      box-shadow: 0 0 0 2px rgba(66, 154, 227, 0.35); height:30px;
+      width:30px;}
     .sidebar .logo .sidebar-logo-compact {
       position: absolute;
       top: 0;
       left: 0;
-      opacity: 0; }
+      opacity: 0;  height:30px !important;
+      width:30px;}
   .sidebar .button-hide,
   .sidebar .button-show,
   .sidebar .button-compact,
@@ -433,10 +436,12 @@ footer {
       display: none; }
     .sidebar.is-compact:not(.is-opened) .logo .sidebar-logo {
       opacity: 0;
-      transition: opacity 0s 0.3s; }
+      transition: opacity 0s 0.3s; height:30px;
+      width:30px;}
     .sidebar.is-compact:not(.is-opened) .logo .sidebar-logo-compact {
       opacity: 1;
-      transition: opacity 0s 0.3s; }
+      transition: opacity 0s 0.3s; height:30px;
+      width:30px;}
     .sidebar.is-compact:not(.is-opened) .server-name {
       opacity: 0; }
     .sidebar.is-compact:not(.is-opened) .form-search {
@@ -1264,7 +1269,8 @@ pre, pre a, pre td, pre span {
 .zabbix-sidebar-logo {
   width: 91px;
   height: 24px;
-  background: url("../img/icon-sprite.svg?20200407") no-repeat -570px -400px; }
+  background: url("../img/icon-sprite.svg?20200407") no-repeat -570px -400px; height:30px;
+  width:30px;}
 
 .zabbix-sidebar-logo-compact {
   width: 24px;
@@ -2942,6 +2948,11 @@ z-select[disabled] button,
   display: flex;
   margin-bottom: 21px;
   justify-content: center; }
+
+  .signin-logo >img{
+    height:300px;
+  }
+
 
 .signin-links {
   width: 100%;
