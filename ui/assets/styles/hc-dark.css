@@ -2902,6 +2902,9 @@ z-select[disabled] button,
   display: flex;
   margin-bottom: 21px;
   justify-content: center; }
+  .signin-logo >img{
+    height:150px;
+  }
 
 .signin-links {
   width: 100%;

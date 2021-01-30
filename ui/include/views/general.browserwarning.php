@@ -31,7 +31,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="Author" content="Zabbix SIA" />
 		<title>You are using an outdated browser.</title>
-		<link rel="icon" href="favicon.ico">
+		<link rel="icon" href="favicon.png">
 		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="assets/img/apple-touch-icon-76x76-precomposed.png">
 		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="assets/img/apple-touch-icon-120x120-precomposed.png">
 		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="assets/img/apple-touch-icon-152x152-precomposed.png">
