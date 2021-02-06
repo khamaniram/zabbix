@@ -341,13 +341,12 @@ footer {
     position: relative;
     box-sizing: border-box;
     display: flex;
-    margin: 10px 10px 0;
+    margin: 8px 8px 0;
     padding: 2px;
     overflow: hidden;
     justify-content: space-between; }
     .sidebar .sidebar-header>.logo >img{
       height:94px;
-      background:white;
     }
 
   .sidebar .sidebar-header-buttons {
@@ -2947,17 +2946,13 @@ z-select[disabled] button,
     min-height: 35px;
     line-height: 35px;
     width: 100%; }
-
-.signin-logo {
-  display: flex;
-  margin-bottom: 21px;
-  justify-content: center; }
-
-  .signin-logo >img{
-    height:150px;
-  }
-
-
+    .signin-logo {
+      display: flex;
+      justify-content: center; }
+      .signin-logo >img{
+        height:200px;
+      }
+    
 .signin-links {
   width: 100%;
   text-align: center;

@@ -19898,7 +19898,7 @@ msgid "Zabbix server is not running: the information displayed may not be curren
 msgstr "Zabbixサーバーが動作していません (画面のリフレッシュを行ってステータスを再確認してください)"
 
 #: include/blocks.inc.php:664
-msgid "Zabbix server is running"
+msgid "Graphoun server is running"
 msgstr "Zabbixサーバーの起動"
 
 #: include/classes/setup/CSetupWizard.php:559

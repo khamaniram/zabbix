@@ -323,7 +323,7 @@ class CZabbixServer {
 	}
 
 	/**
-	 * Returns true if the Zabbix server is running and false otherwise.
+	 * Returns true if the Graphoun server is running and false otherwise.
 	 *
 	 * @param $sid
 	 *

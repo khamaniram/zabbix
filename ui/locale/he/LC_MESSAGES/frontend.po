@@ -20000,7 +20000,7 @@ msgid "Zabbix server is not running: the information displayed may not be curren
 msgstr "שרת ה־Zabbix אינו פעיל: יכול להיות שהמידע המוצג אינו עדכני."
 
 #: include/blocks.inc.php:664
-msgid "Zabbix server is running"
+msgid "Graphoun server is running"
 msgstr "שרת ה־Zabbix פעיל"
 
 #: include/classes/setup/CSetupWizard.php:559

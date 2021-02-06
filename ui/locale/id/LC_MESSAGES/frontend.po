@@ -19892,7 +19892,7 @@ msgid "Zabbix server is not running: the information displayed may not be curren
 msgstr "Server Zabbix tidak berjalan: Informasi yang ditampilkan mungkin tidak saat ini."
 
 #: include/blocks.inc.php:664
-msgid "Zabbix server is running"
+msgid "Graphoun server is running"
 msgstr "Server Zabbix berjalan"
 
 #: include/classes/setup/CSetupWizard.php:559

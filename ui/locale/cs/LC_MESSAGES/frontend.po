@@ -20118,7 +20118,7 @@ msgid "Zabbix server is not running: the information displayed may not be curren
 msgstr "Zabbix server není v provozu: zobrazované informace nemusí být aktuální."
 
 #: include/blocks.inc.php:664
-msgid "Zabbix server is running"
+msgid "Graphoun server is running"
 msgstr "Zabbix server běží"
 
 #: include/classes/setup/CSetupWizard.php:559

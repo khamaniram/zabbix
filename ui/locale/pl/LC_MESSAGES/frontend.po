@@ -20116,7 +20116,7 @@ msgid "Zabbix server is not running: the information displayed may not be curren
 msgstr "Serwer Zabbix nie działa: wyświetlane informacje mogą być nieaktualne."
 
 #: include/blocks.inc.php:664
-msgid "Zabbix server is running"
+msgid "Graphoun server is running"
 msgstr "Serwer Zabbixa jest uruchomiony"
 
 #: include/classes/setup/CSetupWizard.php:559

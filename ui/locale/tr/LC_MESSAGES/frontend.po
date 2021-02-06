@@ -20004,7 +20004,7 @@ msgid "Zabbix server is not running: the information displayed may not be curren
 msgstr "Zabbix sunucu çalışmıyor; gösterilen bilgi geçerli olmayabilir."
 
 #: include/blocks.inc.php:664
-msgid "Zabbix server is running"
+msgid "Graphoun server is running"
 msgstr "Zabbix sunucu çalışıyor"
 
 #: include/classes/setup/CSetupWizard.php:559
