@@ -27,7 +27,7 @@
 #include "xml.h"
 #include "embed.h"
 
-#define ZBX_ES_MEMORY_LIMIT	(1024 * 1024 * 10)
+#define ZBX_ES_MEMORY_LIMIT	(1024 * 1024 * 64)
 #define ZBX_ES_TIMEOUT		10
 
 #define ZBX_ES_STACK_LIMIT	1000
@@ -439,7 +439,6 @@ int	zbx_es_execute(zbx_es_t *es, const char *script, const char *code, int size,
 	char **error)
 {
 	void		*buffer;
-	char		*output = NULL;
 	volatile int	ret = FAIL;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() param:%s", __func__, param);
@@ -496,41 +495,49 @@ int	zbx_es_execute(zbx_es_t *es, const char *script, const char *code, int size,
 		goto out;
 	}
 
-	if (0 == duk_check_type(es->env->ctx, -1, DUK_TYPE_UNDEFINED))
+	if (NULL != script_ret || SUCCEED == ZBX_CHECK_LOG_LEVEL(LOG_LEVEL_DEBUG))
 	{
-		if (0 != duk_check_type(es->env->ctx, -1, DUK_TYPE_NULL))
+		if (0 == duk_check_type(es->env->ctx, -1, DUK_TYPE_UNDEFINED))
 		{
-			ret = SUCCEED;
+			if (0 != duk_check_type(es->env->ctx, -1, DUK_TYPE_NULL))
+			{
+				ret = SUCCEED;
 
-			if (NULL != script_ret)
-				*script_ret = NULL;
+				if (NULL != script_ret)
+					*script_ret = NULL;
 
-			zabbix_log(LOG_LEVEL_DEBUG, "%s() output: null", __func__);
+				zabbix_log(LOG_LEVEL_DEBUG, "%s() output: null", __func__);
+			}
+			else
+			{
+				char	*output = NULL;
+
+				if (SUCCEED != (ret = zbx_cesu8_to_utf8(duk_safe_to_string(es->env->ctx, -1), &output)))
+					*error = zbx_strdup(*error, "could not convert return value to utf8");
+				else
+					zabbix_log(LOG_LEVEL_DEBUG, "%s() output:'%s'", __func__, output);
+
+				if (SUCCEED == ret && NULL != script_ret)
+					*script_ret = output;
+				else
+					zbx_free(output);
+			}
 		}
 		else
 		{
 			if (NULL == script_ret)
-				script_ret = &output;
-
-			if (SUCCEED != (ret = zbx_cesu8_to_utf8(duk_safe_to_string(es->env->ctx, -1), &output)))
 			{
-				*error = zbx_strdup(*error, "could not convert return value to utf8");
+				zabbix_log(LOG_LEVEL_DEBUG, "%s(): undefined return value", __func__);
+				ret = SUCCEED;
 			}
 			else
-			{
-				*script_ret = zbx_strdup(NULL, output);
-				zabbix_log(LOG_LEVEL_DEBUG, "%s() output:'%s'", __func__, *script_ret);
-			}
+				*error = zbx_strdup(*error, "undefined return value");
 		}
 	}
-	else
-		*error = zbx_strdup(*error, "undefined return value");
 
 	duk_pop(es->env->ctx);
 	es->env->rt_error_num = 0;
 out:
-	zbx_free(output);
-
 	if (NULL != es->env->json)
 	{
 		zbx_json_close(es->env->json);

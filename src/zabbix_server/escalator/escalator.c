@@ -833,7 +833,7 @@ static void	add_command_alert(zbx_db_insert_t *db_insert, int alerts_num, zbx_ui
 		const zbx_script_t *script, zbx_alert_status_t status, const char *error)
 {
 	int	now, alerttype = ALERT_TYPE_COMMAND, alert_status = status;
-	char	*tmp = NULL, *message;
+	char	*tmp = NULL;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
@@ -847,21 +847,26 @@ static void	add_command_alert(zbx_db_insert_t *db_insert, int alerts_num, zbx_ui
 	now = (int)time(NULL);
 
 	if (ZBX_SCRIPT_TYPE_IPMI == script->type || ZBX_SCRIPT_TYPE_SSH == script->type
-			|| ZBX_SCRIPT_TYPE_TELNET == script->type)
+			|| ZBX_SCRIPT_TYPE_TELNET == script->type || ZBX_SCRIPT_TYPE_CUSTOM_SCRIPT == script->type)
 	{
-		message = ZBX_NULL2EMPTY_STR(script->command_orig);
+		tmp = zbx_dsprintf(tmp, "%s:%s", host->host, ZBX_NULL2EMPTY_STR(script->command_orig));
 	}
 	else
 	{
+		char	*message = NULL;
+
 		if (FAIL == get_scriptname_by_scriptid(script->scriptid, &message))
 		{
 			zabbix_log(LOG_LEVEL_WARNING, "failed to find scriptname using script id " ZBX_FS_UI64,
 					script->scriptid);
-			message = NULL;
-		}
-	}
 
-	tmp = zbx_dsprintf(tmp, "%s:%s", host->host, ZBX_NULL2EMPTY_STR(message));
+			tmp = zbx_dsprintf(tmp, "%s:", host->host);
+		}
+		else
+			tmp = zbx_dsprintf(tmp, "%s:%s", host->host, ZBX_NULL2EMPTY_STR(message));
+
+		zbx_free(message);
+	}
 
 	if (NULL == r_event)
 	{
@@ -875,7 +880,6 @@ static void	add_command_alert(zbx_db_insert_t *db_insert, int alerts_num, zbx_ui
 	}
 
 	zbx_free(tmp);
-	zbx_free(message);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -1231,11 +1235,12 @@ static void	execute_commands(const DB_EVENT *event, const DB_EVENT *r_event, con
 			}
 
 			if (SUCCEED == (rc = zbx_script_prepare(&script, &host, NULL, ZBX_SCRIPT_CTX_ACTION,
-					event->eventid, error, sizeof(error), (DB_EVENT*)event)))
+					event->eventid, error, sizeof(error), (DB_EVENT**)&event)))
 			{
-				if (0 == host.proxy_hostid || ZBX_SCRIPT_EXECUTE_ON_SERVER == script.execute_on)
+				if (0 == host.proxy_hostid || ZBX_SCRIPT_EXECUTE_ON_SERVER == script.execute_on ||
+						ZBX_SCRIPT_TYPE_WEBHOOK == script.type)
 				{
-					rc = zbx_script_execute(&script, &host, NULL, event, ZBX_SCRIPT_CTX_EVENT,
+					rc = zbx_script_execute(&script, &host, NULL, event, ZBX_SCRIPT_CTX_ACTION,
 							NULL, error, sizeof(error), NULL);
 					status = ALERT_STATUS_SENT;
 				}
