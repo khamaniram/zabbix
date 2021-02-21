@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ class CTest extends PHPUnit_Framework_TestCase {
 			try {
 				$method->invoke(!$method->isStatic() ? $context : null);
 			} catch (Exception $e) {
-				$error = 'Callback "'.$callback.'" is not defined in requested context.';
+				$error = 'Failed to execute callback "'.$callback.'": '.$e->getMessage();
 				if (!$required) {
 					self::addWarning($error);
 				}
@@ -213,6 +213,7 @@ class CTest extends PHPUnit_Framework_TestCase {
 		$callbacks = $this->getAnnotationTokensByName($class_annotations, 'on-before');
 		if (!self::executeCallbacks($this, $callbacks)) {
 			self::markTestSuiteSkipped();
+			throw new Exception(implode("\n", static::$warnings));
 
 			return;
 		}
@@ -350,7 +351,7 @@ class CTest extends PHPUnit_Framework_TestCase {
 
 		DBclose();
 
-		if (self::$warnings) {
+		if (defined('PHPUNIT_REPORT_WARNINGS') && PHPUNIT_REPORT_WARNINGS && self::$warnings) {
 			throw new PHPUnit_Framework_Warning(implode("\n", self::$warnings));
 		}
 
@@ -401,7 +402,7 @@ class CTest extends PHPUnit_Framework_TestCase {
 	 * @param string $warning    warning text
 	 */
 	public static function addWarning($warning) {
-		if (defined('PHPUNIT_REPORT_WARNINGS') && PHPUNIT_REPORT_WARNINGS && !in_array($warning, self::$warnings)) {
+		if (!in_array($warning, self::$warnings)) {
 			self::$warnings[] = $warning;
 		}
 	}

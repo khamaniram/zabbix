@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -60,12 +60,12 @@ class CWidgetElement extends CElement {
 	}
 
 	/**
-	 * Check if widget is editable (dashboard is set to edit mode).
+	 * Check if widget is editable (widget edit button is present).
 	 *
 	 * @return boolean
 	 */
 	public function isEditable() {
-		return $this->query('xpath:.//button[@class="btn-widget-edit"]')->one()->isDisplayed();
+		return $this->query('xpath:.//button[@class="btn-widget-edit"]')->one()->isPresent();
 	}
 
 	/**

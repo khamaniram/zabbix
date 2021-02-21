@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -56,11 +56,15 @@ class CTriggerExpression {
 	 * An options array
 	 *
 	 * Supported options:
-	 *   'lldmacros' => true	Enable low-level discovery macros usage in trigger expression.
+	 *   'lldmacros' => true          Enable low-level discovery macros usage in trigger expression.
+	 *   'lowercase_errors' => false  Return error messages in lowercase.
 	 *
 	 * @var array
 	 */
-	public $options = ['lldmacros' => true];
+	public $options = [
+		'lldmacros' => true,
+		'lowercase_errors' => false
+	];
 
 	/**
 	 * Source string.
@@ -156,10 +160,14 @@ class CTriggerExpression {
 	/**
 	 * @param array $options
 	 * @param bool  $options['lldmacros']
+	 * @param bool  $options['lowercase_errors']
 	 */
 	public function __construct(array $options = []) {
 		if (array_key_exists('lldmacros', $options)) {
 			$this->options['lldmacros'] = $options['lldmacros'];
+		}
+		if (array_key_exists('lowercase_errors', $options)) {
+			$this->options['lowercase_errors'] = $options['lowercase_errors'];
 		}
 
 		$this->binaryOperatorParser = new CSetParser(['<', '>', '<=', '>=', '+', '-', '/', '*', '=', '<>']);
@@ -450,15 +458,19 @@ class CTriggerExpression {
 		}
 
 		if ($this->pos == 0) {
-			$this->error = _('Incorrect trigger expression.');
+			$this->error = $this->options['lowercase_errors']
+				? _('incorrect trigger expression')
+				: _('Incorrect trigger expression.');
 			$this->isValid = false;
 		}
 
 		if ($level != 0 || isset($this->expression[$this->pos])
 				|| ($state != self::STATE_AFTER_CLOSE_BRACE && $state != self::STATE_AFTER_CONSTANT)) {
 
-			$this->error = _('Incorrect trigger expression.').' '._s('Check expression part starting from "%1$s".',
-					substr($this->expression, $this->pos == 0 ? 0 : $this->pos - 1));
+			$this->error = $this->options['lowercase_errors']
+				? _('incorrect trigger expression starting from "%1$s"')
+				: _('Incorrect trigger expression.').' '._('Check expression part starting from "%1$s".');
+			$this->error = _params($this->error, [substr($this->expression, $this->pos == 0 ? 0 : $this->pos - 1)]);
 			$this->isValid = false;
 
 			return false;

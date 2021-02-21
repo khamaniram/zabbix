@@ -1,6 +1,6 @@
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -323,10 +323,12 @@ static char		*ZABBIX_HOSTNAME = NULL;
 static char		*ZABBIX_KEY = NULL;
 static char		*ZABBIX_KEY_VALUE = NULL;
 
-#if !defined(_WINDOWS)
-static void	send_signal_handler(int sig)
-{
+static ZBX_THREAD_HANDLE	thread;
+volatile sig_atomic_t		sig_exiting = 0;
 
+#if !defined(_WINDOWS)
+static void	sender_signal_handler(int sig)
+{
 #define CASE_LOG_WARNING(signal) \
 	case signal:							\
 		zabbix_log(LOG_LEVEL_WARNING, "interrupted by signal " #signal " while executing operation"); \
@@ -348,6 +350,17 @@ static void	send_signal_handler(int sig)
 	/* Calling _exit() to terminate the process immediately is important. See ZBX-5732 for details. */
 	/* Return FAIL instead of EXIT_FAILURE to keep return signals consistent for send_value() */
 	_exit(FAIL);
+}
+
+static void	main_signal_handler(int sig)
+{
+	if (0 == sig_exiting)
+	{
+		sig_exiting = 1;
+
+		if (ZBX_THREAD_HANDLE_NULL != thread)
+			kill(thread, sig);
+	}
 }
 #endif
 
@@ -560,12 +573,12 @@ static	ZBX_THREAD_ENTRY(send_value, args)
 #endif
 
 #if !defined(_WINDOWS)
-	signal(SIGINT, send_signal_handler);
-	signal(SIGQUIT, send_signal_handler);
-	signal(SIGTERM, send_signal_handler);
-	signal(SIGHUP, send_signal_handler);
-	signal(SIGALRM, send_signal_handler);
-	signal(SIGPIPE, send_signal_handler);
+	signal(SIGINT, sender_signal_handler);
+	signal(SIGQUIT, sender_signal_handler);
+	signal(SIGTERM, sender_signal_handler);
+	signal(SIGHUP, sender_signal_handler);
+	signal(SIGALRM, sender_signal_handler);
+	signal(SIGPIPE, sender_signal_handler);
 #endif
 	switch (configured_tls_connect_mode)
 	{
@@ -1146,7 +1159,6 @@ int	main(int argc, char **argv)
 	const char		*p;
 	zbx_thread_args_t	thread_args;
 	ZBX_THREAD_SENDVAL_ARGS sendval_args;
-	ZBX_THREAD_HANDLE	thread;
 
 	progname = get_program_name(argv[0]);
 
@@ -1190,6 +1202,14 @@ int	main(int argc, char **argv)
 				(int)ZABBIX_SERVER_PORT, (int)MIN_ZABBIX_PORT, (int)MAX_ZABBIX_PORT);
 		goto exit;
 	}
+#if !defined(_WINDOWS)
+	signal(SIGINT, main_signal_handler);
+	signal(SIGQUIT, main_signal_handler);
+	signal(SIGTERM, main_signal_handler);
+	signal(SIGHUP, main_signal_handler);
+	signal(SIGALRM, main_signal_handler);
+	signal(SIGPIPE, main_signal_handler);
+#endif
 
 	thread_args.server_num = 0;
 	thread_args.args = &sendval_args;
@@ -1255,7 +1275,7 @@ int	main(int argc, char **argv)
 
 		ret = SUCCEED;
 
-		while ((SUCCEED == ret || SUCCEED_PARTIAL == ret) &&
+		while (0 == sig_exiting && (SUCCEED == ret || SUCCEED_PARTIAL == ret) &&
 				NULL != zbx_fgets_alloc(&in_line, &in_line_alloc, in))
 		{
 			/* line format: <hostname> <key> [<timestamp>] <value> */

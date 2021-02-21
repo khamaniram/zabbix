@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 **/
 
 
-define('ZABBIX_VERSION',		'4.0.28rc1');
-define('ZABBIX_API_VERSION',	'4.0.28');
+define('ZABBIX_VERSION',		'4.0.29rc1');
+define('ZABBIX_API_VERSION',	'4.0.29');
 define('ZABBIX_EXPORT_VERSION',	'4.0');
 define('ZABBIX_DB_VERSION',		4000000);
 
 define('ZABBIX_COPYRIGHT_FROM',	'2001');
-define('ZABBIX_COPYRIGHT_TO',	'2020');
+define('ZABBIX_COPYRIGHT_TO',	'2021');
 
 define('ZBX_LOGIN_ATTEMPTS',	5);
 define('ZBX_LOGIN_BLOCK',		30); // sec
@@ -1189,39 +1189,40 @@ define('XML_REQUIRED',		0x08);
 
 // API validation
 // multiple types
-define('API_MULTIPLE',			0);
+define('API_MULTIPLE',				0);
 // scalar data types
-define('API_STRING_UTF8',		1);
-define('API_INT32',				2);
-define('API_ID',				3);
-define('API_BOOLEAN',			4);
-define('API_FLAG',				5);
-define('API_FLOAT',				6);
-define('API_UINT64',			7);
+define('API_STRING_UTF8',			1);
+define('API_INT32',					2);
+define('API_ID',					3);
+define('API_BOOLEAN',				4);
+define('API_FLAG',					5);
+define('API_FLOAT',					6);
+define('API_UINT64',				7);
 // arrays
-define('API_OBJECT',			8);
-define('API_IDS',				9);
-define('API_OBJECTS',			10);
-define('API_STRINGS_UTF8',		11);
-define('API_INTS32',			12);
-define('API_FLOATS',			13);
-define('API_UINTS64',			14);
+define('API_OBJECT',				8);
+define('API_IDS',					9);
+define('API_OBJECTS',				10);
+define('API_STRINGS_UTF8',			11);
+define('API_INTS32',				12);
+define('API_FLOATS',				13);
+define('API_UINTS64',				14);
 // specific types
-define('API_HG_NAME',			15);
-define('API_SCRIPT_NAME',		16);
-define('API_USER_MACRO',		17);
-define('API_TIME_PERIOD',		18);
-define('API_REGEX',				19);
-define('API_HTTP_POST',			20);
-define('API_VARIABLE_NAME',		21);
-define('API_OUTPUT',			22);
-define('API_TIME_UNIT',			23);
-define('API_URL',				24);
-define('API_H_NAME',			25);
-define('API_RANGE_TIME',		26);
-define('API_COLOR',				27);
-define('API_NUMERIC',			28);
-define('API_SORTORDER',			29);
+define('API_HG_NAME',				15);
+define('API_SCRIPT_NAME',			16);
+define('API_USER_MACRO',			17);
+define('API_TIME_PERIOD',			18);
+define('API_REGEX',					19);
+define('API_HTTP_POST',				20);
+define('API_VARIABLE_NAME',			21);
+define('API_OUTPUT',				22);
+define('API_TIME_UNIT',				23);
+define('API_URL',					24);
+define('API_H_NAME',				25);
+define('API_RANGE_TIME',			26);
+define('API_COLOR',					27);
+define('API_NUMERIC',				28);
+define('API_SORTORDER',				29);
+define('API_TRIGGER_EXPRESSION',	30);
 
 // flags
 define('API_REQUIRED',				0x0001);
