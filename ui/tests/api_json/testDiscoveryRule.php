@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -2890,8 +2890,8 @@ class testDiscoveryRule extends CAPITest {
 			],
 			'Test overrides and override operations are deleted.' => [
 				['133763'],
-				['101', '102'],
-				['101', '102', '103', '104', '105', '106'],
+				['1001', '1002'],
+				['1001', '1002', '1003', '1004', '1005', '1006'],
 				null
 			]
 		];

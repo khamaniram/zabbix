@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -217,7 +217,9 @@ if (count($data['steps']) > 0) {
 
 		$result_table->addRow([
 			$step['num'].':',
-			(new CCol($step['name']))->setId('preproc-test-step-'.$i.'-name'),
+			(new CCol($step['name']))
+				->setId('preproc-test-step-'.$i.'-name')
+				->addClass(ZBX_STYLE_WORDBREAK),
 			(new CCol())
 				->addClass(ZBX_STYLE_RIGHT)
 				->setId('preproc-test-step-'.$i.'-result')

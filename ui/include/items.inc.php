@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -1190,7 +1190,7 @@ function getDataOverview(?array $groupids, ?array $hostids, array $filter): arra
 	}
 
 	CArrayHelper::sort($db_hosts, [
-		['field' => 'name', 'order' => ZBX_SORT_UP],
+		['field' => 'name', 'order' => ZBX_SORT_UP]
 	]);
 
 	$has_hidden_hosts = (count($db_hosts) > ZBX_MAX_TABLE_COLUMNS);

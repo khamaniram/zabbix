@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -987,16 +987,19 @@ class CHostInterface extends CApiService {
 			]);
 			$host = reset($host);
 
-			foreach ($db_interfaces as $db_interface) {
-				if (bccomp($db_interface['hostid'], $host['hostid']) == 0) {
-					$type = $db_interface['type'];
-					break;
+			if ($host) {
+				foreach ($db_interfaces as $db_interface) {
+					if (bccomp($db_interface['hostid'], $host['hostid']) == 0) {
+						$type = $db_interface['type'];
+						break;
+					}
 				}
-			}
 
-			self::exception(ZBX_API_ERROR_PARAMETERS,
-				_s('No default interface for "%1$s" type on "%2$s".', hostInterfaceTypeNumToName($type), $host['name'])
-			);
+				self::exception(ZBX_API_ERROR_PARAMETERS, _s(
+					'No default interface for "%1$s" type on "%2$s".', hostInterfaceTypeNumToName($type), $host['name']
+				));
+			}
+			// Otherwise it's not a host. Could be a Proxy.
 		}
 
 		$interface_count = [];
@@ -1067,9 +1070,12 @@ class CHostInterface extends CApiService {
 					]);
 					$host = reset($host);
 
-					self::exception(ZBX_API_ERROR_PARAMETERS,_s('No default interface for "%1$s" type on "%2$s".',
-						hostInterfaceTypeNumToName($type), $host['name']
-					));
+					if ($host) {
+						self::exception(ZBX_API_ERROR_PARAMETERS,_s('No default interface for "%1$s" type on "%2$s".',
+							hostInterfaceTypeNumToName($type), $host['name']
+						));
+					}
+					// Otherwise it's not a host. Could be a Proxy.
 				}
 
 				if ($counters['main'] > 1) {
