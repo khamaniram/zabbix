@@ -1,5 +1,5 @@
 
-# PostgreSQL Agent 2
+# PostgreSQL by Zabbix agent 2
 
 ## Overview
 
@@ -15,7 +15,7 @@ This template was tested on:
 
 ## Setup
 
-> See [Zabbix template operation](https://www.zabbix.com/documentation/5.4/manual/config/templates_out_of_the_box/zabbix_agent2) for basic instructions.
+> See [Zabbix template operation](https://www.zabbix.com/documentation/6.0/manual/config/templates_out_of_the_box/zabbix_agent2) for basic instructions.
 
 1\. Create PostgreSQL user for monitoring (`<password>` at your discretion):
 
@@ -29,7 +29,7 @@ GRANT EXECUTE ON FUNCTION pg_catalog.pg_stat_file(text) TO zbx_monitor;
 
 ```bash
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
-    host            all              zbx_monitor            127.0.0.1   	         md5
+    host            all              zbx_monitor            localhost   	         md5
 ```
 
 For more information please read the PostgreSQL documentation https://www.postgresql.org/docs/current/auth-pg-hba-conf.html.
@@ -132,7 +132,7 @@ There are no template links in this template.
 | PostgreSQL       | Application {#APPLICATION}: Replication replay lag        |                                                                                                                                                                                               | DEPENDENT      | pgsql.replication.process.replay_lag["{#APPLICATION}"]<p>**Preprocessing**:</p><p>- JSONPATH: `$['{#APPLICATION}'].replay_lag`</p>                                         |
 | PostgreSQL       | Application {#APPLICATION}: Replication write lag         |                                                                                                                                                                                               | DEPENDENT      | pgsql.replication.process.write_lag["{#APPLICATION}"]<p>**Preprocessing**:</p><p>- JSONPATH: `$['{#APPLICATION}'].write_lag`</p>                                           |
 | PostgreSQL       | DB {#DBNAME}: Database age                                | <p>Database age</p>                                                                                                                                                                           | ZABBIX_PASSIVE | pgsql.db.age["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]                                                                                                        |
-| PostgreSQL       | DB {#DBNAME}: Get bloating tables                         | <p>Number оf bloating tables</p>                                                                                                                                                              | ZABBIX_PASSIVE | pgsql.db.bloating_tables["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]                                                                                            |
+| PostgreSQL       | DB {#DBNAME}: Get bloating tables                         | <p>Number of bloating tables</p>                                                                                                                                                              | ZABBIX_PASSIVE | pgsql.db.bloating_tables["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]                                                                                            |
 | PostgreSQL       | DB {#DBNAME}: Database size                               | <p>Database size</p>                                                                                                                                                                          | ZABBIX_PASSIVE | pgsql.db.size["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]                                                                                                       |
 | PostgreSQL       | DB {#DBNAME}: Blocks hit per second                       | <p>Total number of times disk blocks were found already in the buffer cache, so that a read was not necessary</p>                                                                             | DEPENDENT      | pgsql.dbstat.blks_hit.rate["{#DBNAME}"]<p>**Preprocessing**:</p><p>- JSONPATH: `$['{#DBNAME}'].blks_hit`</p><p>- CHANGE_PER_SECOND                                         |
 | PostgreSQL       | DB {#DBNAME}: Disk blocks read per second                 | <p>Total number of disk blocks read in this database</p>                                                                                                                                      | DEPENDENT      | pgsql.dbstat.blks_read.rate["{#DBNAME}"]<p>**Preprocessing**:</p><p>- JSONPATH: `$['{#DBNAME}'].blks_read`</p><p>- CHANGE_PER_SECOND                                       |

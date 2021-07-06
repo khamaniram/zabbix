@@ -280,8 +280,6 @@ $('#tabs').on('tabsactivate', (event, ui) => {
 // Value maps.
 (() => {
 	const valuemap = document.querySelector('#valuemap-div');
-	const form = document.querySelector('#massupdate-form');
-	const action = form.querySelector('#action').value;
 
 	if (!valuemap) {
 		return false;
@@ -429,6 +427,10 @@ function submitPopup(overlay) {
 		$(form).trimValues(['[name^="valuemap_rename["]']);
 	}
 
+	if (form.querySelector('#visible_tags:checked')) {
+		$(form).trimValues(['[name^="tags"][name$="[tag]"]', '[name^="tags"][name$="[value]"]']);
+	}
+
 	if (action == 'popup.massupdate.host') {
 		// Depending on checkboxes, create a value for hidden field 'tls_accept'.
 		let tls_accept = 0x00;
@@ -449,7 +451,7 @@ function submitPopup(overlay) {
 	// Remove error message.
 	overlay.$dialogue.find('.<?= ZBX_STYLE_MSG_BAD ?>').remove();
 
-	url = new Curl('zabbix.php', false),
+	const url = new Curl('zabbix.php', false);
 	url.setArgument('action', action);
 	url.setArgument('output', 'ajax');
 

@@ -14,10 +14,10 @@ This guide describes how to integrate Zabbix 5.4 installation with VictorOps usi
 ## Setting up the webhook in Zabbix
 1\. In the *Administration > Media types* section, import [media_victorops.yaml](media_victorops.yaml).
 
-2\. Open the newly added **VictorOps** media type and replace *&lt;PLACE ENDPOINT URL HERE&gt;* placeholder with your REST integration endpiont URL.<br>
+2\. Open the newly added **VictorOps** media type and replace *&lt;PLACE ENDPOINT URL HERE&gt;* placeholder with your REST integration endpoint URL.<br>
 The following parameters should be filled:<br>
 **vops_endpoint** - URL of your VictorOps REST endpoint.<br>
-**vops_routing_key** - routhong key of the escalation policy.<br>
+**vops_routing_key** - routing key of the escalation policy.<br>
 
 3\. The following parameters can help you customize the alerts ([documentation](https://help.victorops.com/knowledge-base/incident-fields-glossary/#glossary-of-fields) for the information):<br>
 **priority_severity** - value for the VictorOps *message_type* field. *severity* is the severity's name in the default Zabbix installation.<br>
@@ -36,7 +36,7 @@ Format explanation:<br>
 "Send to" field should be filled as "Default" or your routing key.<br>
 Make sure this user has access to all hosts, for which you would like problem notifications to be converted into VictorOps tasks.
 
-For more information see [Zabbix](https://www.zabbix.com/documentation/5.4/manual/config/notifications) and [VictorOps](https://help.victorops.com/) documentations.
+For more information see [Zabbix](https://www.zabbix.com/documentation/6.0/manual/config/notifications) and [VictorOps](https://help.victorops.com/) documentations.
 
 ## Supported versions
 Zabbix 5.4 and higher

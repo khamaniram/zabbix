@@ -203,7 +203,7 @@ class testPageLowLevelDiscovery extends CWebTest {
 					],
 					'disabled' => true,
 					'message' => 'Cannot send request',
-					'details' => 'Cannot send request: discovery rule is disabled.',
+					'details' => 'Cannot send request: discovery rule "Discovery rule 2" on host "Host for host prototype tests" is not monitored.',
 					'hostid' => self::HOST_ID
 				]
 			],
@@ -281,7 +281,7 @@ class testPageLowLevelDiscovery extends CWebTest {
 						'Host groups' => 'Templates/Server hardware'
 					],
 					'context' => 'template',
-					'rows' => 39
+					'rows' => 40
 				]
 			],
 			[
@@ -441,11 +441,11 @@ class testPageLowLevelDiscovery extends CWebTest {
 					'filter' => [
 						'Type' => 'Database monitor',
 						'Update interval' => '1h',
-						'Name'=> 'Databases'
+						'Name'=> 'Non-local database'
 					],
 					'context' => 'template',
 					'expected' => [
-						'Databases discovery'
+						'Non-local database discovery'
 					]
 				]
 			],

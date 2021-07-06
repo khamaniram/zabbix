@@ -739,24 +739,6 @@ class CHelpItems {
 					'description' => _('Number of items in the queue which are delayed in Zabbix server or proxy by "from" till "to" seconds, inclusive.')
 				]
 			],
-			ITEM_TYPE_AGGREGATE => [
-				[
-					'key' => 'grpavg[group,key,func,<param>]',
-					'description' => _('Calculates the average value, based on the various parameters supplied. Zabbix server collects aggregate information by doing direct database queries.')
-				],
-				[
-					'key' => 'grpmin[group,key,func,<param>]',
-					'description' => _('Calculates the minimum value, based on the various parameters supplied. Zabbix server collects aggregate information by doing direct database queries.')
-				],
-				[
-					'key' => 'grpmax[group,key,func,<param>]',
-					'description' => _('Calculates the maximum value, based on the various parameters supplied. Zabbix server collects aggregate information by doing direct database queries.')
-				],
-				[
-					'key' => 'grpsum[group,key,func,<param>]',
-					'description' => _('Calculates the sum of values, based on the various parameters supplied. Zabbix server collects aggregate information by doing direct database queries.')
-				]
-			],
 			ITEM_TYPE_SIMPLE => [
 				[
 					'key' => 'icmpping[<target>,<packets>,<interval>,<size>,<timeout>]',
@@ -1299,15 +1281,15 @@ class CHelpItems {
 			],
 			ITEM_TYPE_JMX => [
 				[
-					'key' => 'jmx[object_name,attribute_name]',
+					'key' => 'jmx[object_name,attribute_name,<unique short description>]',
 					'description' => _('Return value of an attribute of MBean object.')
 				],
 				[
-					'key' => 'jmx.discovery[<discovery mode>,<object name>]',
+					'key' => 'jmx.discovery[<discovery mode>,<object name>,<unique short description>]',
 					'description' => _('Return a JSON array with LLD macros describing the MBean objects or their attributes. Can be used for LLD.')
 				],
 				[
-					'key' => 'jmx.get[<discovery mode>,<object name>]',
+					'key' => 'jmx.get[<discovery mode>,<object name>,<unique short description>]',
 					'description' => _('Return a JSON array with MBean objects or their attributes. Compared to jmx.discovery it does not define LLD macros. Can be used for LLD.')
 				]
 			],

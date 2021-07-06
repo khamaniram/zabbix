@@ -3,7 +3,7 @@
 
 ## Overview
 
-For Zabbix version: 5.2 and higher  
+For Zabbix version: 6.0 and higher  
 The template to monitor Apache HTTPD by Zabbix that work without any external scripts.
 Most of the metrics are collected in one go, thanks to Zabbix bulk data collection.  
 Template `Apache by Zabbix agent` - collects metrics by polling [mod_status](https://httpd.apache.org/docs/current/mod/mod_status.html) locally with Zabbix agent:
@@ -59,7 +59,7 @@ This template was tested on:
 
 ## Setup
 
-> See [Zabbix template operation](https://www.zabbix.com/documentation/5.2/manual/config/templates_out_of_the_box/zabbix_agent) for basic instructions.
+> See [Zabbix template operation](https://www.zabbix.com/documentation/6.0/manual/config/templates_out_of_the_box/zabbix_agent) for basic instructions.
 
 Setup [mod_status](https://httpd.apache.org/docs/current/mod/mod_status.html)
 
@@ -75,7 +75,7 @@ Example configuration of Apache:
 ```
 
 If you use another path, then don't forget to change `{$APACHE.STATUS.PATH}` macro.
-Install and setup [Zabbix agent](https://www.zabbix.com/documentation/5.4/manual/installation/install_from_packages).
+Install and setup [Zabbix agent](https://www.zabbix.com/documentation/6.0/manual/installation/install_from_packages).
 
 
 ## Zabbix configuration
@@ -101,7 +101,7 @@ There are no template links in this template.
 
 |Name|Description|Type|Key and additional info|
 |----|-----------|----|----|
-|Event MPM discovery |<p>Additional metrics if event MPM is used</p><p>https://httpd.apache.org/docs/current/mod/event.html</p> |DEPENDENT |apache.mpm.event.discovery<p>**Preprocessing**:</p><p>- JSONPATH: `$.ServerMPM`</p><p>- JAVASCRIPT: `return JSON.stringify(value === 'event' ? [{'{#SINGLETON}': ''}] : []);`</p> |
+|Event MPM discovery |<p>Additional metrics if event MPM is used</p><p>https://httpd.apache.org/docs/current/mod/event.html</p> |DEPENDENT |apache.mpm.event.discovery<p>**Preprocessing**:</p><p>- JAVASCRIPT: `return JSON.stringify(JSON.parse(value).ServerMPM === 'event'     ? [{'{#SINGLETON}': ''}] : []);`</p><p>- DISCARD_UNCHANGED_HEARTBEAT: `3h`</p> |
 
 ## Items collected
 

@@ -23,8 +23,7 @@
  * @var CView $this
  */
 
-$rulesTable = (new CTable())
-	->setHeader(['', _('Update existing'), _('Create new'), _('Delete missing')]);
+$rules_table = new CTable();
 
 $titles = [
 	'groups' => _('Groups'),
@@ -33,88 +32,104 @@ $titles = [
 	'valueMaps' => _('Value mappings'),
 	'templateDashboards' => _('Template dashboards'),
 	'templateLinkage' => _('Template linkage'),
-	'applications' => _('Applications'),
 	'items' => _('Items'),
 	'discoveryRules' => _('Discovery rules'),
 	'triggers' => _('Triggers'),
 	'graphs' => _('Graphs'),
 	'httptests' => _('Web scenarios'),
-	'screens' => _('Screens'),
 	'maps' => _('Maps')
 ];
 
-$user_type = CWebUser::getType();
-
-if ($user_type == USER_TYPE_SUPER_ADMIN) {
+if ($data['user']['type'] == USER_TYPE_SUPER_ADMIN) {
 	$titles['images'] = _('Images');
 	$titles['mediaTypes'] = _('Media types');
 }
 
+$col_update = false;
+$col_create = false;
+$col_delete = false;
+
 foreach ($titles as $key => $title) {
-	$cbExist = null;
-	$cbMissed = null;
-	$cbDeleted = null;
+	if (array_key_exists($key, $data['rules'])) {
+		$col_update = ($col_update || array_key_exists('updateExisting', $data['rules'][$key]));
+		$col_create = ($col_create || array_key_exists('createMissing', $data['rules'][$key]));
+		$col_delete = ($col_delete || array_key_exists('deleteMissing', $data['rules'][$key]));
+	}
+}
+
+foreach ($titles as $key => $title) {
+	if (!array_key_exists($key, $data['rules'])) {
+		continue;
+	}
+
+	$checkbox_update = null;
+	$checkbox_create = null;
+	$checkbox_delete = null;
 
 	if (array_key_exists('updateExisting', $data['rules'][$key])) {
-		$cbExist = (new CCheckBox('rules['.$key.'][updateExisting]'))
+		$checkbox_update = (new CCheckBox('rules['.$key.'][updateExisting]'))
 			->setChecked($data['rules'][$key]['updateExisting']);
 
-		if ($key !== 'maps' && $key !== 'screens' && $user_type != USER_TYPE_SUPER_ADMIN
-				&& $user_type != USER_TYPE_ZABBIX_ADMIN) {
-			$cbExist->setAttribute('disabled', 'disabled');
-		}
-		elseif ($key === 'maps') {
-			$cbExist->setAttribute('disabled', $data['allowed_edit_maps'] ? null : true);
-		}
-		elseif ($key === 'screens') {
-			$cbExist->setAttribute('disabled', $data['allowed_edit_screens'] ? null : true);
-		}
-
 		if ($key === 'images') {
-			$cbExist->onClick('updateWarning(this, '.json_encode(_('Images for all maps will be updated!')).')');
+			$checkbox_update->onClick('updateWarning(this, '.json_encode(_('Images for all maps will be updated!')).')');
 		}
 	}
 
 	if (array_key_exists('createMissing', $data['rules'][$key])) {
-		$cbMissed = (new CCheckBox('rules['.$key.'][createMissing]'))
+		$checkbox_create = (new CCheckBox('rules['.$key.'][createMissing]'))
 			->setChecked($data['rules'][$key]['createMissing']);
 	}
 
-	if ($key !== 'maps' && $key !== 'screens' && $user_type != USER_TYPE_SUPER_ADMIN
-			&& $user_type != USER_TYPE_ZABBIX_ADMIN) {
-		$cbMissed->setAttribute('disabled', 'disabled');
-	}
-	elseif ($key === 'maps') {
-		$cbMissed->setAttribute('disabled', $data['allowed_edit_maps'] ? null : true);
-	}
-	elseif ($key === 'screens') {
-		$cbMissed->setAttribute('disabled', $data['allowed_edit_screens'] ? null : true);
-	}
-
 	if (array_key_exists('deleteMissing', $data['rules'][$key])) {
-		$cbDeleted = (new CCheckBox('rules['.$key.'][deleteMissing]'))
+		$checkbox_delete = (new CCheckBox('rules['.$key.'][deleteMissing]'))
 			->setChecked($data['rules'][$key]['deleteMissing'])
 			->addClass('deleteMissing');
 
-		if ($key !== 'maps' && $key !== 'screens' && $user_type != USER_TYPE_SUPER_ADMIN
-				&& $user_type != USER_TYPE_ZABBIX_ADMIN) {
-			$cbDeleted->setAttribute('disabled', 'disabled');
-		}
-
 		if ($key === 'templateLinkage') {
-			$cbDeleted->onClick('updateWarning(this, '.json_encode(
+			$checkbox_delete->onClick('updateWarning(this, '.json_encode(
 				_('Template and host properties that are inherited through template linkage will be unlinked and cleared.')
 			).')');
 		}
 	}
 
-	$rulesTable->addRow([
+	switch ($key) {
+		case 'maps':
+			if (!$data['user']['can_edit_maps']) {
+				$checkbox_update->setAttribute('disabled', 'disabled');
+				$checkbox_create->setAttribute('disabled', 'disabled');
+			}
+			break;
+
+		default:
+			if ($data['user']['type'] != USER_TYPE_SUPER_ADMIN && $data['user']['type'] != USER_TYPE_ZABBIX_ADMIN) {
+				if ($checkbox_update !== null) {
+					$checkbox_update->setAttribute('disabled', 'disabled');
+				}
+
+				if ($checkbox_create !== null) {
+					$checkbox_create->setAttribute('disabled', 'disabled');
+				}
+
+				if ($checkbox_delete !== null) {
+					$checkbox_delete->setAttribute('disabled', 'disabled');
+				}
+			}
+	}
+
+	$rules_table->addRow([
 		$title,
-		(new CCol($cbExist))->addClass(ZBX_STYLE_CENTER),
-		(new CCol($cbMissed))->addClass(ZBX_STYLE_CENTER),
-		(new CCol($cbDeleted))->addClass(ZBX_STYLE_CENTER)
+		$col_update ? (new CCol($checkbox_update))->addClass(ZBX_STYLE_CENTER) : null,
+		$col_create ? (new CCol($checkbox_create))->addClass(ZBX_STYLE_CENTER) : null,
+		$col_delete ? (new CCol($checkbox_delete))->addClass(ZBX_STYLE_CENTER) : null
 	]);
 }
+
+$rules_table->setHeader([
+	'',
+	$col_update ? _('Update existing') : null,
+	$col_create ? _('Create new') : null,
+	$col_delete ? _('Delete missing') : null
+]);
 
 $form_list = (new CFormList())
 	->addRow((new CLabel(_('Import file'), 'import_file'))->setAsteriskMark(),
@@ -123,7 +138,7 @@ $form_list = (new CFormList())
 			->setAriaRequired()
 			->setAttribute('autofocus', 'autofocus')
 	)
-	->addRow(_('Rules'), new CDiv($rulesTable));
+	->addRow(_('Rules'), new CDiv($rules_table));
 
 $form = (new CForm('post', null, 'multipart/form-data'))
 	->setId('import-form')
@@ -142,7 +157,7 @@ $output = [
 			'class' => '',
 			'keepOpen' => true,
 			'isSubmit' => true,
-			'action' => 'return confirmSubmit(overlay);'
+			'action' => 'return submitPopup(overlay);'
 		]
 	]
 ];
